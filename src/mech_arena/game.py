@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Tuple
+from dataclasses import dataclass, field
+from typing import List, Tuple
 
 import pygame
 
@@ -22,6 +22,7 @@ class InputState:
     move: Tuple[float, float] = (0.0, 0.0)
     fire_target: Tuple[float, float] | None = None
     trigger_scan: bool = False
+    analysis_commands: List[Tuple[str, int]] = field(default_factory=list)
 
 
 class Game:
@@ -73,6 +74,7 @@ class Game:
                 move=inputs.move,
                 fire_target=inputs.fire_target,
                 trigger_scan=inputs.trigger_scan,
+                analysis_commands=inputs.analysis_commands,
             )
             self._draw()
         pygame.quit()
@@ -81,14 +83,22 @@ class Game:
         move_x = move_y = 0.0
         fire_target: Tuple[float, float] | None = None
         trigger_scan = False
+        analysis_commands: List[Tuple[str, int]] = []
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 fire_target = event.pos
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_TAB:
-                trigger_scan = True
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_TAB:
+                    trigger_scan = True
+                elif pygame.K_1 <= event.key <= pygame.K_9:
+                    index = event.key - pygame.K_1
+                    if event.mod & pygame.KMOD_SHIFT:
+                        analysis_commands.append(("pulse_patch", index))
+                    else:
+                        analysis_commands.append(("toggle_ablation", index))
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w] or keys[pygame.K_UP]:
@@ -109,7 +119,10 @@ class Game:
             fire_target = pygame.mouse.get_pos()
 
         return InputState(
-            move=(move_x, move_y), fire_target=fire_target, trigger_scan=trigger_scan
+            move=(move_x, move_y),
+            fire_target=fire_target,
+            trigger_scan=trigger_scan,
+            analysis_commands=analysis_commands,
         )
 
     def _draw(self) -> None:
