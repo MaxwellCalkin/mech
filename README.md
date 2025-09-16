@@ -1,26 +1,37 @@
 # Mechanistic Mech Arena
 
-Mechanistic Mech Arena is a story-driven action game that teaches the foundations of
-mechanistic interpretability. Players pilot a mech suit through a series of
-chapters, each culminating in a challenging boss battle. The game is intended for
-high school students and newcomers interested in the field of AI alignment.
+Mechanistic Mech Arena is a browser-inspired (Pygame) action game that doubles as an
+interactive primer on mechanistic interpretability. You pilot an experimental mech inside
+a large language model, disrupt rogue subsystems, and collect insights that explain how
+transformers really work.
 
-This repository contains the source code for the game, along with design docs.
+## Features
+- Moment-to-moment top-down combat with smooth movement and projectile-based attacks.
+- A living schematic of the active transformer layer that updates as you discover new
+  insights.
+- Collectible insight cards that narrate real interpretability concepts such as attention
+  heads, induction circuits, and activation patching.
+- Scan mode that freezes the arena, highlights token flows, and surfaces contextual tips.
 
-## Setup
-1. Install Python 3.10+.
+## Getting Started
+1. Install Python 3.10 or newer.
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-3. Run the game:
+3. Launch the game:
    ```bash
    python -m mech_arena
    ```
 
-## Project Structure
-- `src/` - Game source code.
-- `docs/` - Design documents and worldbuilding notes.
+The game automatically degrades to a headless mode for unit tests, so running the test
+suite does not require a graphical environment.
 
-## Contributing
-See `AGENTS.md` for development guidelines.
+## Project Structure
+- `src/mech_arena/` – Game source code (entities, levels, main loop).
+- `docs/` – Design documents and development plans.
+- `tests/` – Automated tests covering the deterministic gameplay systems.
+
+## Development
+See `AGENTS.md` for formatting and testing guidelines. Contributions should maintain the
+educational tone of the project and keep interpretability explanations accurate.

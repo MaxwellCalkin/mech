@@ -1,35 +1,43 @@
-"""Enemy logic with simple homing behavior."""
+"""Enemy logic with simple behaviour and interpretability metadata."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
 
-try:
+try:  # pragma: no cover - pygame may not be installed during unit tests
     import pygame
-except Exception:  # pragma: no cover - pygame may not be installed
-    pygame = None
+except Exception:  # pragma: no cover - allow running tests without pygame
+    pygame = None  # type: ignore[assignment]
 
 from .player import Player
 
 
 @dataclass
 class Enemy:
-    """Very simple enemy that moves toward the player."""
+    """Enemy entity that drifts toward the player."""
 
-    x: int
-    y: int
-    speed: int = 2
-    size: int = 30
+    x: float
+    y: float
+    topic: str
+    summary: str
+    speed: float = 110.0
+    size: int = 32
+    health: int = 3
+    damage: int = 1
+    colour: tuple[int, int, int] = (244, 96, 137)
 
-    def update(self, player: Player) -> None:
-        if player.x > self.x:
-            self.x += self.speed
-        elif player.x < self.x:
-            self.x -= self.speed
+    def update(self, player: Player, dt: float) -> None:
+        """Move toward the player's current position."""
+        dx = player.x - self.x
+        dy = player.y - self.y
+        distance = (dx**2 + dy**2) ** 0.5 or 1.0
+        self.x += (dx / distance) * self.speed * dt
+        self.y += (dy / distance) * self.speed * dt
 
-        if player.y > self.y:
-            self.y += self.speed
-        elif player.y < self.y:
-            self.y -= self.speed
+    def take_damage(self, amount: int) -> None:
+        """Reduce the enemy's health."""
+        self.health = max(0, self.health - amount)
 
     @property
     def rect(self) -> Any:
